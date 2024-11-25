@@ -9,8 +9,12 @@ def main():
         player_rank = x[1]['rank']
         p_average = player_score.mean()
         p_max = player_score.max()
-        p_min = player_score.min()
         p_rank = player_rank.mean()
+
+        # Round
+        p_average = round(p_average, 2)
+        p_max = round(p_max, 2)
+        p_rank = round(p_rank, 2)
         print(f'{x[0]}')
         print(f'    対局数: {len(x[1])}')
         print(f"    平均スコア: {p_average}")
