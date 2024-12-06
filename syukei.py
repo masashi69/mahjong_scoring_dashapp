@@ -4,8 +4,11 @@ mj_df = pd.read_csv('2024_majong_score.csv')
 average_score = mj_df['score'].mean()
 average_rank  = mj_df['rank'].mean()
 
-# To calcurate deviation of rank
-average_rank  = abs(4 - average_rank)
+def CalcDeviationRank(rank):
+    # To calcurate deviation of rank
+    return abs(4 - rank)
+
+average_rank = CalcDeviationRank(average_rank)
 
 def main():
     for ply in mj_df.groupby('player'):
@@ -13,7 +16,7 @@ def main():
         p_max = ply[1]['score'].max()
 
         # To calcurate deviation of rank
-        p_avg_rank_abs = abs(4 - p_avg_rank)
+        p_avg_rank_abs = CalcDeviationRank(p_avg_rank)
 
         # T-score
         TScore_s = (p_avg_score - average_score ) / mj_df['score'].std() * 10 + 50
