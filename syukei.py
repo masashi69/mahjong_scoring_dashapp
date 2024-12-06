@@ -1,16 +1,15 @@
 import pandas as pd
 
-mj_df = pd.read_csv('2024_majong_score.csv')
-average_score = mj_df['score'].mean()
-average_rank  = mj_df['rank'].mean()
-
 def CalcDeviationRank(rank):
     # To calcurate deviation of rank
     return abs(4 - rank)
 
-average_rank = CalcDeviationRank(average_rank)
-
 def main():
+    mj_df = pd.read_csv('2024_majong_score.csv')
+    average_score = mj_df['score'].mean()
+    average_rank  = mj_df['rank'].mean()
+    average_rank = CalcDeviationRank(average_rank)
+
     for ply in mj_df.groupby('player'):
         p_avg_score, p_avg_rank = ply[1][['score', 'rank']].mean()
         p_max = ply[1]['score'].max()
