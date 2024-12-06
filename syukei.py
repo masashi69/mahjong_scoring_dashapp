@@ -26,7 +26,7 @@ def main():
         p_average = round(p_avg_score, 2)
         p_rank = round(p_avg_rank, 2)
         p_max = round(p_max, 2)
-        TScore = round(TScore)
+        TScore = round(TScore, 2)
 
         print(f'{ply[0]}')
         print(f'    対局数: {len(ply[1])}')
