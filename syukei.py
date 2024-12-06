@@ -1,11 +1,14 @@
 import pandas as pd
+import sys
+
+FileName = sys.argv[1]
 
 def CalcDeviationRank(rank):
     # To calcurate deviation of rank
     return abs(4 - rank)
 
 def main():
-    mj_df = pd.read_csv('2024_majong_score.csv')
+    mj_df = pd.read_csv(FileName)
     average_score = mj_df['score'].mean()
     average_rank = mj_df['rank'].mean()
     average_rank = CalcDeviationRank(average_rank)
