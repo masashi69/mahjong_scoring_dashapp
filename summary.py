@@ -13,6 +13,8 @@ def main():
     average_rank = mj_df['rank'].mean()
     average_rank = CalcDeviationRank(average_rank)
 
+    result = list()
+
     for ply in mj_df.groupby('player'):
         p_avg_score, p_avg_rank = ply[1][['score', 'rank']].mean()
         p_max = ply[1]['score'].max()
@@ -31,12 +33,18 @@ def main():
         p_max = round(p_max, 2)
         TScore = round(TScore, 2)
 
-        print(f'{ply[0]}')
-        print(f'    対局数: {len(ply[1])}')
-        print(f'    平均スコア: {p_average}')
-        print(f'    最高スコア: {p_max}')
-        print(f'    平均順位  : {p_rank}')
-        print(f'    スコア&ランク偏差値: {TScore}')
+        player_data = (ply[0] ,len(ply[1]) ,p_average ,p_max ,p_rank ,TScore)
+        result.append(player_data)    
+
+    headers = ['名前','対局数','平均スコア','最高スコア', \
+                '平均順位','雀力偏差値']
+
+    # Shaping output table
+    pd.set_option('display.unicode.east_asian_width', True)
+    df_result = pd.DataFrame(result, columns=headers)
+    df_result.index += 1
+
+    print(df_result)
 
 if __name__ == '__main__':
     main()
