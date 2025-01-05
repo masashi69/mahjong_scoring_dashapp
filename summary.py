@@ -1,4 +1,5 @@
 import pandas as pd
+import plotly.figure_factory as ff
 import sys
 
 FileName = sys.argv[1]
@@ -45,6 +46,11 @@ def main():
     df_result.index += 1
 
     print(df_result)
+
+    fig = ff.create_table(df_result)
+    fig.update_layout(autosize=True, title_text='test title')
+    fig.update_layout({'margin':{'t':50}})
+    fig.write_image('test.png')
 
 if __name__ == '__main__':
     main()
