@@ -1,5 +1,6 @@
 import pandas as pd
-import plotly.figure_factory as ff
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import sys
 
 FileName = sys.argv[1]
@@ -47,9 +48,13 @@ def main():
 
     print(df_result)
 
-    fig = ff.create_table(df_result)
-    fig.update_layout(autosize=True, title_text='test title')
-    fig.update_layout({'margin':{'t':50}})
+    fig = make_subplots(rows=1, cols=1, specs=[[{'type':'table'}]], subplot_titles=('test1'))
+    fig.add_trace(go.Table(
+        header=dict(values=df_result.columns.values),
+        cells=dict(values=[list(df_result['名前']),list(df_result['対局数']),
+            list(df_result['平均スコア']),list(df_result['最高スコア']),
+            list(df_result['平均順位']),list(df_result['雀力偏差値'])])),row=1, col=1)
+    fig.update_layout(title_text='test title')
     fig.write_image('test.png')
 
 if __name__ == '__main__':
