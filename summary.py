@@ -36,7 +36,7 @@ def main():
         TScore = round(TScore, 2)
 
         player_data = (ply[0] ,len(ply[1]) ,p_average ,p_max ,p_rank ,TScore)
-        result.append(player_data)    
+        result.append(player_data)
 
     headers = ['名前','対局数','平均スコア','最高スコア', \
                 '平均順位','雀力偏差値']
@@ -46,15 +46,15 @@ def main():
     df_result = pd.DataFrame(result, columns=headers)
     df_result.index += 1
 
-    print(df_result)
+    #print(df_result)
 
-    fig = make_subplots(rows=1, cols=1, specs=[[{'type':'table'}]], subplot_titles=('test1'))
+    fig = make_subplots()
     fig.add_trace(go.Table(
         header=dict(values=df_result.columns.values),
         cells=dict(values=[list(df_result['名前']),list(df_result['対局数']),
             list(df_result['平均スコア']),list(df_result['最高スコア']),
-            list(df_result['平均順位']),list(df_result['雀力偏差値'])])),row=1, col=1)
-    fig.update_layout(title_text='test title')
+            list(df_result['平均順位']),list(df_result['雀力偏差値'])])))
+    fig.update_layout(title_text='Jong Crew 2025 Score')
     fig.write_image('test.png')
 
 if __name__ == '__main__':
