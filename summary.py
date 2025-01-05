@@ -2,6 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import sys
+import datetime
 
 FileName = sys.argv[1]
 
@@ -55,7 +56,7 @@ def main():
             list(df_result['平均スコア']),list(df_result['最高スコア']),
             list(df_result['平均順位']),list(df_result['雀力偏差値'])])))
     fig.update_layout(title_text='Jong Crew 2025 Score')
-    fig.write_image('test.png')
+    fig.write_image(''.join(['Score_',format(datetime.date.today(), '%Y%m%d'),'.png']))
 
 if __name__ == '__main__':
     main()
