@@ -4,7 +4,6 @@ from plotly.subplots import make_subplots
 import sys
 import datetime
 
-FileName = sys.argv[1]
 
 def CalcDeviationRank(rank):
     # To calcurate deviation of rank
@@ -40,6 +39,7 @@ def CalculateScore(scorefile):
     return result
 
 def main():
+    FileName = sys.argv[1]
     mj_df = pd.read_csv(FileName)
 
     result = CalculateScore(mj_df)
