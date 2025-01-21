@@ -19,6 +19,7 @@ def create_tscore_table():
     return result_tscore
 
 app = Dash()
+server = app.server
 
 score_table = dash_table.DataTable(df.to_dict('records'),
                 [{"name": i, "id": i} for i in df.columns],
@@ -31,7 +32,7 @@ grid_tscore = dag.AgGrid(
     id="tscore-table",
     rowData=tscore.to_dict("records"),
     columnDefs=[{"field": i} for i in tscore.columns],
-    defaultColDef={"width": 150}
+    defaultColDef={"width": 125}
 )
 
 app.layout = [
