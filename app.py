@@ -14,7 +14,7 @@ for f in os.scandir(currentpath):
     if 'csv' in f.name:
         filelist.append(f.name)
 
-#todo select dropdown
+# select a file from dropdown
 fileinput = dcc.Dropdown(filelist, id='dropdown-data')
 
 
@@ -34,7 +34,7 @@ server = app.server
 @callback(
     Output('player-data', 'options'),
     Input('dropdown-data', 'value'),
-    prevent_initial_call=True
+    prevent_initial_call=True # Don't call at app launch
 )
 def players(value):
     df = pd.read_csv(value)
