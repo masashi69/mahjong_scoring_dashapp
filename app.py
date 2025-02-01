@@ -71,18 +71,25 @@ def create_grid_tscore(value):
     return grid_tscore
 
 app.layout = [
-    html.H1(children=f'Jong-Crew2024 結果'),
-    html.H2(children='対局結果'),
-    html.H3(children='対局ID=日付_卓_対局回数_対局種別  例) 0518_1_1_T: 5/18の卓1 1回戦 東風'),
+    html.H1(children=f'Jong-Crew スコア結果'),
+    html.H2(children='対局結果スコア'),
+    html.Div(children='検索したい年のファイルを選択してください'),
+    html.Div(children='各結果は検索後出力されます'),
+    html.Br(),
     fileinput,
+    html.H3(children='スコア一覧'),
+    html.Div(children='対局ID=日付_卓_対局回数_対局種別  例) 0518_1_1_T: 5/18の卓1 1回戦 東風'),
+    html.Br(),
     html.Div(id='score-table'),
-    #dash_table.DataTable(id='tbldata'),
-    #score_table
     html.H2(children='個人スコアグラフ'),
+    html.Div(children='スコア経緯を検索したいプレイヤーを選択してください'),
+    html.Br(),
     dcc.Dropdown(id='player-data'),
     dcc.Graph(id='graph-content'),
-    #dcc.Store(id='graph-content'),
     html.H2(children='個人スコアサマリー'),
+    html.Div(children='タイトル行クリックでソートできます'),
+    html.Div(children='偏差値: 平均スコア+平均順位を合わせた偏差'),
+    html.Br(),
     html.Div(id='tscore-table')
 ]
 
