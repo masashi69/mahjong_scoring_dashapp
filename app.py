@@ -4,12 +4,22 @@ import pandas as pd
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import dash_ag_grid as dag
+import os 
 import summary
 
-#todo select dropdown
-df = pd.read_csv('2024_majong_score.csv')
+currentpath = os.getcwd()
+filelist = list()
 
-def create_tscore_table():
+for f in os.scandir(currentpath):
+    if 'csv' in f.name:
+        filelist.append(f.name)
+
+#todo select dropdown
+fileinput = dcc.Dropdown(filelist, id='dropdown-data')
+
+
+def create_tscore_table(file):
+    df = pd.read_csv(file)
     df_tscore = summary.CalculateScore(df)
     headers = ['名前','対局数','平均スコア','最高スコア', \
             '平均順位','雀力偏差値']
@@ -21,39 +31,70 @@ def create_tscore_table():
 app = Dash()
 server = app.server
 
-score_table = dash_table.DataTable(df.to_dict('records'),
-                [{"name": i, "id": i} for i in df.columns],
-                style_cell={'textAlign': 'left'}, style_header={'fontWeight': 'bold'},
-                page_size=10)
-
-tscore = create_tscore_table()
-
-grid_tscore = dag.AgGrid(
-    id="tscore-table",
-    rowData=tscore.to_dict("records"),
-    columnDefs=[{"field": i} for i in tscore.columns],
-    defaultColDef={"width": 125}
+@callback(
+    Output('player-data', 'options'),
+    Input('dropdown-data', 'value'),
+    prevent_initial_call=True
 )
+def players(value):
+    df = pd.read_csv(value)
+    return df['player'].unique()
+
+@callback(
+    Output('score-table', 'children'),
+    Input('dropdown-data', 'value'),
+    prevent_initial_call=True
+)
+def display_score_table(value):
+    df = pd.read_csv(value)
+    score_table = dash_table.DataTable(df.to_dict('records'),
+                    [{"name": i, "id": i} for i in df.columns],
+                    style_cell={'textAlign': 'left'}, style_header={'fontWeight': 'bold'},
+                    page_size=10)
+
+    return score_table
+
+@callback(
+    Output('tscore-table', 'children'),
+    Input('dropdown-data', 'value'),
+    prevent_initial_call=True
+)
+def create_grid_tscore(value):
+    tscore = create_tscore_table(value)
+
+    grid_tscore = dag.AgGrid(
+        rowData=tscore.to_dict("records"),
+        columnDefs=[{"field": i} for i in tscore.columns],
+        defaultColDef={"width": 125}
+    )
+
+    return grid_tscore
 
 app.layout = [
     html.H1(children=f'Jong-Crew2024 結果'),
     html.H2(children='対局結果'),
     html.H3(children='対局ID=日付_卓_対局回数_対局種別  例) 0518_1_1_T: 5/18の卓1 1回戦 東風'),
-    score_table,
-    dash_table.DataTable(id='tbldata'),
+    fileinput,
+    html.Div(id='score-table'),
+    #dash_table.DataTable(id='tbldata'),
+    #score_table
     html.H2(children='個人スコアグラフ'),
-    dcc.Dropdown(df.player.unique(), id='dropdown-selection'),
+    dcc.Dropdown(id='player-data'),
     dcc.Graph(id='graph-content'),
+    #dcc.Store(id='graph-content'),
     html.H2(children='個人スコアサマリー'),
-    grid_tscore
+    html.Div(id='tscore-table')
 ]
 
 @callback(
     Output('graph-content', 'figure'),
-    Input('dropdown-selection', 'value')
+    Input('dropdown-data', 'value'),
+    Input('player-data', 'value'),
+    prevent_initial_call=True
 )
-def display_score_graph(value):
-    dff = df[df.player==value]
+def display_score_graph(file, player):
+    df = pd.read_csv(file)
+    dff = df[df.player==player]
     # Create figure with secondary y-axis
     fig = make_subplots(specs=[[{"secondary_y": True}]])
 
