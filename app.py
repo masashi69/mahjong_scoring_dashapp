@@ -49,7 +49,13 @@ def display_score_table(value):
     df = pd.read_csv(value)
     score_table = dash_table.DataTable(df.to_dict('records'),
                     [{"name": i, "id": i} for i in df.columns],
-                    style_cell={'textAlign': 'left'}, style_header={'fontWeight': 'bold'},
+                    style_header={'fontWeight': 'bold'},
+                    style_cell_conditional=[
+                    {
+                        'if': {'column_id': c},
+                        'textAlign': 'left'
+                    } for c in ['gameid', 'date', 'player']
+                    ],
                     page_size=12)
 
     return score_table
