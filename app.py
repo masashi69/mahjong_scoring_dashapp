@@ -50,7 +50,7 @@ def display_score_table(value):
     score_table = dash_table.DataTable(df.to_dict('records'),
                     [{"name": i, "id": i} for i in df.columns],
                     style_cell={'textAlign': 'left'}, style_header={'fontWeight': 'bold'},
-                    page_size=10)
+                    page_size=12)
 
     return score_table
 
