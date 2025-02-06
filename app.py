@@ -129,6 +129,7 @@ def display_score_graph(file, player):
     fig.update_yaxes(title_text="順位", secondary_y=True, dtick=1)
 
     return fig
+
 # Automatically closed keyboard for smartphone
 clientside_callback(
     """
