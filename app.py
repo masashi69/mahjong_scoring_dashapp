@@ -1,4 +1,4 @@
-from dash import Dash, html, dcc, callback, Output, Input, dash_table
+from dash import Dash, html, dcc, callback, Output, Input, dash_table, clientside_callback
 import plotly.express as px
 import pandas as pd
 from plotly.subplots import make_subplots
@@ -129,6 +129,18 @@ def display_score_graph(file, player):
     fig.update_yaxes(title_text="順位", secondary_y=True, dtick=1)
 
     return fig
+# Automatically closed keyboard for smartphone
+clientside_callback(
+    """
+    function(value) {
+        // Remove focus from the dropdown element
+        document.activeElement.blur();
+    }
+    """,
+    Input('dropdown-data', 'value'),
+    Input('player-data', 'value'),
+    prevent_initial_call=True
+)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
