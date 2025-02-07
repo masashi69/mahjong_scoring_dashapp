@@ -71,7 +71,7 @@ def create_grid_tscore(value):
     grid_tscore = dag.AgGrid(
         rowData=tscore.to_dict("records"),
         columnDefs=[{"field": i} for i in tscore.columns],
-        defaultColDef={"width": 125}
+        columnSize="responsiveSizeToFit"
     )
 
     return grid_tscore
@@ -93,7 +93,7 @@ app.layout = [
     dcc.Dropdown(id='player-data'),
     dcc.Graph(id='graph-content'),
     html.H2(children='個人スコアサマリー'),
-    html.Div(children='タイトル行クリックでソートできます'),
+    html.Div(children='タイトル行クリックでソート、ドラッグで各列の移動やサイズ変更可能です'),
     html.Div(children='偏差値: 平均スコア+平均順位を合わせた偏差'),
     html.Br(),
     html.Div(id='tscore-table')
