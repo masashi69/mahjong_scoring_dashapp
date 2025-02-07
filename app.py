@@ -10,12 +10,12 @@ import summary
 currentpath = os.getcwd()
 filelist = list()
 
+# select a file from dropdown
 for f in os.scandir(currentpath):
     if 'csv' in f.name:
         filelist.append(f.name)
 
-# select a file from dropdown
-fileinput = dcc.Dropdown(filelist, id='dropdown-data')
+
 
 
 def create_tscore_table(file):
@@ -82,7 +82,7 @@ app.layout = [
     html.Div(children='検索したい年のファイルを選択してください'),
     html.Div(children='各結果は検索後出力されます'),
     html.Br(),
-    fileinput,
+    dcc.Dropdown(filelist, id='dropdown-data'),
     html.H3(children='スコア一覧'),
     html.Div(children='対局ID=日付_卓_対局回数_対局種別  例) 0518_1_1_T: 5/18の卓1 1回戦 東風'),
     html.Br(),
