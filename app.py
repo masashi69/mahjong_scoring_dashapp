@@ -15,11 +15,11 @@ for f in os.scandir(currentpath):
     if 'csv' in f.name:
         filelist.append(f.name)
 
-
-
+def readfile(file):
+    return pd.read_csv(file) 
 
 def create_tscore_table(file):
-    df = pd.read_csv(file)
+    df = readfile(file)
     df_tscore = summary.CalculateScore(df)
     headers = ['名前','対局数','平均スコア','最高スコア', \
             '平均順位','雀力偏差値']
@@ -37,7 +37,7 @@ server = app.server
     prevent_initial_call=True # Don't call at app launch
 )
 def players(value):
-    df = pd.read_csv(value)
+    df = readfile(value)
     return df['player'].unique()
 
 @callback(
@@ -46,7 +46,7 @@ def players(value):
     prevent_initial_call=True
 )
 def display_score_table(value):
-    df = pd.read_csv(value)
+    df = readfile(value)
     score_table = dash_table.DataTable(df.to_dict('records'),
                     [{"name": i, "id": i} for i in df.columns],
                     style_header={'fontWeight': 'bold'},
@@ -106,7 +106,7 @@ app.layout = [
     prevent_initial_call=True
 )
 def display_score_graph(file, player):
-    df = pd.read_csv(file)
+    df = readfile(file)
     dff = df[df.player==player]
     # Create figure with secondary y-axis
     fig = make_subplots(specs=[[{"secondary_y": True}]])
