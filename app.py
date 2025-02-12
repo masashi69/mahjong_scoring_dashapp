@@ -1,10 +1,19 @@
-from dash import Dash, html, dcc, callback, Output, Input, dash_table, clientside_callback
+from dash import (
+    Dash,
+    html,
+    dcc,
+    callback,
+    Output,
+    Input,
+    dash_table,
+    clientside_callback,
+)
 import plotly.express as px
 import pandas as pd
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import dash_ag_grid as dag
-import os 
+import os
 import summary
 
 currentpath = os.getcwd()
@@ -15,30 +24,34 @@ for f in os.scandir(currentpath):
     if 'csv' in f.name:
         filelist.append(f.name)
 
+
 def readfile(file):
-    return pd.read_csv(file) 
+    return pd.read_csv(file)
+
 
 def create_tscore_table(file):
     df = readfile(file)
     df_tscore = summary.CalculateScore(df)
-    headers = ['名前','対局数','平均スコア','最高スコア', \
-            '平均順位','雀力偏差値']
+    headers = ['名前', '対局数', '平均スコア', '最高スコア', '平均順位', '雀力偏差値']
 
     result_tscore = pd.DataFrame(df_tscore, columns=headers)
 
     return result_tscore
 
+
 app = Dash()
 server = app.server
+
 
 @callback(
     Output('player-data', 'options'),
     Input('dropdown-data', 'value'),
-    prevent_initial_call=True # Don't call at app launch
+    prevent_initial_call=True  # Don't call at app launch
 )
 def players(value):
     df = readfile(value)
     return df['player'].unique()
+
 
 @callback(
     Output('score-table', 'children'),
@@ -47,18 +60,19 @@ def players(value):
 )
 def display_score_table(value):
     df = readfile(value)
-    score_table = dash_table.DataTable(df.to_dict('records'),
-                    [{"name": i, "id": i} for i in df.columns],
-                    style_header={'fontWeight': 'bold'},
-                    style_cell_conditional=[
-                    {
-                        'if': {'column_id': c},
-                        'textAlign': 'left'
-                    } for c in ['gameid', 'date', 'player']
-                    ],
-                    page_size=12)
+    score_table = dash_table.DataTable(
+        df.to_dict('records'),
+        [{"name": i, "id": i} for i in df.columns],
+        style_header={'fontWeight': 'bold'},
+        style_cell_conditional=[
+            {'if': {'column_id': c}, 'textAlign': 'left'}
+            for c in ['gameid', 'date', 'player']
+        ],
+        page_size=12
+    )
 
     return score_table
+
 
 @callback(
     Output('tscore-table', 'children'),
@@ -76,6 +90,7 @@ def create_grid_tscore(value):
 
     return grid_tscore
 
+
 app.layout = [
     html.H1(children=f'Jong-Crew スコア結果'),
     html.H2(children='対局結果スコア'),
@@ -84,7 +99,9 @@ app.layout = [
     html.Br(),
     dcc.Dropdown(filelist, id='dropdown-data'),
     html.H3(children='スコア一覧'),
-    html.Div(children='対局ID=日付_卓_対局回数_対局種別  例) 0518_1_1_T: 5/18の卓1 1回戦 東風'),
+    html.Div(
+        children='対局ID=日付_卓_対局回数_対局種別  例) 0518_1_1_T: 5/18の卓1 1回戦 東風'
+    ),
     html.Br(),
     html.Div(id='score-table'),
     html.H2(children='個人スコアグラフ'),
@@ -93,11 +110,14 @@ app.layout = [
     dcc.Dropdown(id='player-data'),
     dcc.Graph(id='graph-content'),
     html.H2(children='個人スコアサマリー'),
-    html.Div(children='タイトル行クリックでソート、ドラッグで各列の移動やサイズ変更可能です'),
+    html.Div(
+        children='タイトル行クリックでソート、ドラッグで各列の移動やサイズ変更可能です'
+    ),
     html.Div(children='偏差値: 平均スコア+平均順位を合わせた偏差'),
     html.Br(),
     html.Div(id='tscore-table')
 ]
+
 
 @callback(
     Output('graph-content', 'figure'),
@@ -107,17 +127,24 @@ app.layout = [
 )
 def display_score_graph(file, player):
     df = readfile(file)
-    dff = df[df.player==player]
+    dff = df[df.player == player]
     # Create figure with secondary y-axis
     fig = make_subplots(specs=[[{"secondary_y": True}]])
 
     # Add traces
     fig.add_trace(
-        go.Scatter(x=dff['gameid'], y=dff['score'], name="スコア",),
+        go.Scatter(
+            x=dff['gameid'],
+            y=dff['score'],
+            name="スコア",
+        ),
     )
     fig.add_trace(
-        go.Scatter(x=dff['gameid'], y=dff['rank'], name="順位"),
-        secondary_y=True
+        go.Scatter(
+            x=dff['gameid'],
+            y=dff['rank'],
+            name="順位"),
+            secondary_y=True
     )
 
     # Reverse rank value for axes
@@ -129,6 +156,7 @@ def display_score_graph(file, player):
     fig.update_yaxes(title_text="順位", secondary_y=True, dtick=1)
 
     return fig
+
 
 # Automatically closed keyboard for smartphone
 clientside_callback(
