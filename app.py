@@ -25,23 +25,42 @@ for f in os.scandir(currentpath):
         filelist.append(f.name)
 
 
-def readfile(file):
-    return pd.read_csv(file)
+def readfile(file, match=None):
+    df = pd.read_csv(file)
+    if match == 'hansou':
+        hansou_df = df[df['gameid'].str.contains('H')]
+        return hansou_df
+    elif match == 'tonpu': 
+        tonpu_df = df[df['gameid'].str.contains('T')]
+        return tonpu_df
+    else:
+        return df
 
-
-def create_tscore_table(file):
-    df = readfile(file)
-    df_tscore = summary.CalculateScore(df)
-    headers = ['名前', '対局数', '平均スコア', '最高スコア', '平均順位', '雀力偏差値']
-
-    result_tscore = pd.DataFrame(df_tscore, columns=headers)
-
-    return result_tscore
+#def create_tscore_table(file):
+#    df = readfile(file, match)
+#    df_tscore = summary.CalculateScore(df)
+#    headers = ['名前', '対局数', '平均スコア', '最高スコア', '平均順位', '雀力偏差値']
+#
+#    result_tscore = pd.DataFrame(df_tscore, columns=headers)
+#
+#    return result_tscore
 
 
 app = Dash()
 server = app.server
 
+#@callback(
+#    Output('result_match', 'children'),
+#    Input('gamematch', 'value'),
+#    prevent_initial_call=True
+#)
+#def display_kind_match(value):
+#    if value == 'hansou':
+#        return '半荘戦'
+#    elif value == 'tonpu': 
+#        return '東風戦'
+#    else:
+#        return '総合スコア'
 
 @callback(
     Output('player-data', 'options'),
@@ -56,10 +75,11 @@ def players(value):
 @callback(
     Output('score-table', 'children'),
     Input('dropdown-data', 'value'),
+    Input('gamematch', 'value'),
     prevent_initial_call=True
 )
-def display_score_table(value):
-    df = readfile(value)
+def display_score_table(value, match):
+    df = readfile(value, match)
     score_table = dash_table.DataTable(
         df.to_dict('records'),
         [{"name": i, "id": i} for i in df.columns],
@@ -77,10 +97,15 @@ def display_score_table(value):
 @callback(
     Output('tscore-table', 'children'),
     Input('dropdown-data', 'value'),
+    Input('gamematch', 'value'),
     prevent_initial_call=True
 )
-def create_grid_tscore(value):
-    tscore = create_tscore_table(value)
+def create_grid_tscore(value, match):
+    df = readfile(value, match)
+    df_tscore = summary.CalculateScore(df)
+    headers = ['名前', '対局数', '平均スコア', '最高スコア', '平均順位', '雀力偏差値']
+
+    tscore = pd.DataFrame(df_tscore, columns=headers)
 
     grid_tscore = dag.AgGrid(
         rowData=tscore.to_dict("records"),
@@ -98,6 +123,15 @@ app.layout = [
     html.Div(children='各結果は検索後出力されます'),
     html.Br(),
     dcc.Dropdown(filelist, id='dropdown-data'),
+    dcc.RadioItems(
+        options=[
+            {'label': '総合スコア', 'value': ''},
+            {'label': '半荘戦', 'value': 'hansou'},
+            {'label': '東風戦', 'value': 'tonpu'},
+        ],
+        value='総合スコア',
+        id='gamematch',
+    ),
     html.H3(children='スコア一覧'),
     html.Div(
         children='対局ID=日付_卓_対局回数_対局種別  例) 0518_1_1_T: 5/18の卓1 1回戦 東風'
@@ -122,11 +156,12 @@ app.layout = [
 @callback(
     Output('graph-content', 'figure'),
     Input('dropdown-data', 'value'),
+    Input('gamematch', 'value'),
     Input('player-data', 'value'),
     prevent_initial_call=True
 )
-def display_score_graph(file, player):
-    df = readfile(file)
+def display_score_graph(file, match, player):
+    df = readfile(file, match)
     dff = df[df.player == player]
     # Create figure with secondary y-axis
     fig = make_subplots(specs=[[{"secondary_y": True}]])
