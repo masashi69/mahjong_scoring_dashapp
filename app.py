@@ -49,18 +49,18 @@ def readfile(file, match=None):
 app = Dash()
 server = app.server
 
-#@callback(
-#    Output('result_match', 'children'),
-#    Input('gamematch', 'value'),
-#    prevent_initial_call=True
-#)
-#def display_kind_match(value):
-#    if value == 'hansou':
-#        return '半荘戦'
-#    elif value == 'tonpu': 
-#        return '東風戦'
-#    else:
-#        return '総合スコア'
+@callback(
+    Output('gamescore', 'children'),
+    Input('gamematch', 'value'),
+    prevent_initial_call=True
+)
+def display_kind_match(value):
+    if value == 'hansou':
+        return '半荘戦'
+    elif value == 'tonpu': 
+        return '東風戦'
+    else:
+        return '総合'
 
 @callback(
     Output('player-data', 'options'),
@@ -131,8 +131,10 @@ app.layout = [
         ],
         value='総合スコア',
         id='gamematch',
+        inline=True,
     ),
-    html.H3(children='スコア一覧'),
+    html.H2([html.Span(id='gamescore'), html.Span(' ' + '各種スコア')]),
+    html.H2(children='スコア一覧'),
     html.Div(
         children='対局ID=日付_卓_対局回数_対局種別  例) 0518_1_1_T: 5/18の卓1 1回戦 東風'
     ),
