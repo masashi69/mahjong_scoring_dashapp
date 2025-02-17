@@ -36,15 +36,6 @@ def readfile(file, match=None):
     else:
         return df
 
-#def create_tscore_table(file):
-#    df = readfile(file, match)
-#    df_tscore = summary.CalculateScore(df)
-#    headers = ['名前', '対局数', '平均スコア', '最高スコア', '平均順位', '雀力偏差値']
-#
-#    result_tscore = pd.DataFrame(df_tscore, columns=headers)
-#
-#    return result_tscore
-
 
 app = Dash()
 server = app.server
