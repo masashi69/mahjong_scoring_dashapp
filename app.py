@@ -94,7 +94,7 @@ def display_score_table(value, match):
 def create_grid_tscore(value, match):
     df = readfile(value, match)
     df_tscore = summary.CalculateScore(df)
-    headers = ['名前', '対局数', '平均スコア', '最高スコア', '平均順位', '雀力偏差値']
+    headers = ['名前', '対局数', '平均スコア', '最高スコア', '平均順位', '4位回避率(%)', '雀力偏差値']
 
     tscore = pd.DataFrame(df_tscore, columns=headers)
 
