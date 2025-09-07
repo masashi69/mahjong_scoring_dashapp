@@ -20,6 +20,11 @@ def CalculateScore(scorefile):
         # To calcurate deviation of rank
         p_avg_rank_abs = CalcDeviationRank(p_avg_rank)
 
+        # Last Avoidance
+        games = len(ply[1])
+        avoidance = len([x for x in ply[1]['rank'] if x !=4])
+        p_avoidance = (avoidance / games) * 100
+
         # T-score
         TScore_s = (p_avg_score - average_score) /scorefile['score'].std() * 10 + 50
         TScore_r = (p_avg_rank_abs - average_rank) / scorefile['rank'].std() * 10 + 50
@@ -29,9 +34,10 @@ def CalculateScore(scorefile):
         p_average = round(p_avg_score, 2)
         p_rank = round(p_avg_rank, 2)
         p_max = round(p_max, 2)
+        p_avoidance = round(p_avoidance, 2)
         TScore = round(TScore, 2)
 
-        player_data = (ply[0] ,len(ply[1]) ,p_average ,p_max ,p_rank ,TScore)
+        player_data = (ply[0] ,len(ply[1]) ,p_average ,p_max ,p_rank ,p_avoidance, TScore)
         result.append(player_data)
 
     return result
@@ -43,7 +49,7 @@ def main():
     result = CalculateScore(mj_df)
 
     headers = ['名前','対局数','平均スコア','最高スコア', \
-                '平均順位','雀力偏差値']
+                '平均順位','4位回避率', '雀力偏差値']
 
     # Shaping output table
     pd.set_option('display.unicode.east_asian_width', True)
