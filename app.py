@@ -94,17 +94,32 @@ def display_score_table(value, match):
 def create_grid_tscore(value, match):
     df = readfile(value, match)
     df_tscore = summary.CalculateScore(df)
-    headers = ['名前', '対局数', '平均スコア', '最高スコア', '平均順位', '4位回避率(%)', '雀力偏差値']
+    headers1 = ['名前', '対局数', '平均スコア', '最高スコア']
+    headers2 = ['名前', '平均順位', '4位回避率(%)', '雀力偏差値']
 
-    tscore = pd.DataFrame(df_tscore, columns=headers)
+    table1 = list()
+    table2 = list()
+
+    for t in df_tscore:
+        table1.append(t[0:4])
+        table2.append(t[0:1]+t[4:])
+
+    sumscore = pd.DataFrame(table1, columns=headers1)
+    tscore = pd.DataFrame(table2, columns=headers2)
+
+    grid_sumscore = dag.AgGrid(
+        rowData=sumscore.to_dict("records"),
+        columnDefs=[{"field": i} for i in sumscore.columns],
+        columnSize="responsiveSizeToFit"
+        )
 
     grid_tscore = dag.AgGrid(
         rowData=tscore.to_dict("records"),
         columnDefs=[{"field": i} for i in tscore.columns],
         columnSize="responsiveSizeToFit"
-    )
+        )
 
-    return grid_tscore
+    return grid_sumscore, grid_tscore
 
 
 app.layout = [
