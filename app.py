@@ -86,7 +86,8 @@ def display_score_table(value, match):
 
 
 @callback(
-    Output('tscore-table', 'children'),
+    Output('tscore-table1', 'children'),
+    Output('tscore-table2', 'children'),
     Input('dropdown-data', 'value'),
     Input('gamematch', 'value'),
     prevent_initial_call=True
@@ -155,9 +156,13 @@ app.layout = [
     html.Div(
         children='タイトル行クリックでソート、ドラッグで各列の移動やサイズ変更可能です'
     ),
+    html.Br(),
+    html.H3('スコア1 得点'),
+    html.Div(id='tscore-table1'),
+    html.H3('スコア2 順位'),
     html.Div(children='偏差値: 平均スコア+平均順位を合わせた偏差'),
     html.Br(),
-    html.Div(id='tscore-table')
+    html.Div(id='tscore-table2')
 ]
 
 
