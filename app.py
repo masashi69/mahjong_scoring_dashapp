@@ -103,7 +103,7 @@ def create_grid_tscore(value, match):
 
     for t in df_tscore:
         table1.append(t[0:4])
-        table2.append(t[0:1]+t[4:])
+        table2.append(t[0:1]+t[4:]) # t[0:1] is for concatenating tuples
 
     sumscore = pd.DataFrame(table1, columns=headers1)
     tscore = pd.DataFrame(table2, columns=headers2)
